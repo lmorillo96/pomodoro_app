@@ -9,6 +9,10 @@ let current = null; // Nos va a decir cual es la tarea que se está ejecutando
 const bAdd = document.querySelector("#bAdd");
 const itTask = document.querySelector("#itTask");
 const form = document.querySelector("#form");
+const taskName = document.querySelector("#time #taskName");
+
+renderTime();
+renderTasks();
 
 // Generación de eventos para agregar las tasks.
 
@@ -51,4 +55,86 @@ function renderTasks() {
 
   const tasksContainer = document.querySelector("#tasks");
   tasksContainer.innerHTML = html.join("");
+
+  // Botones para iniciación de función pomodoro.
+
+  const startButtons = document.querySelectorAll(".task .start-button");
+
+  startButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      if (!timer) {
+        const id = button.getAttribute("data-id");
+        startButtonHandler(id);
+        button.textContent = "In progress ... ";
+      }
+    });
+  });
+}
+
+//Generamos la función para generar el tiempos del pomodoro.
+
+function startButtonHandler(id) {
+  time = 5;
+  current = id;
+  const taskIndex = tasks.findIndex((task) => task.id === id);
+  taskName.textContent = tasks[taskIndex].title;
+
+  timer = setInterval(() => {
+    timerHandler(id);
+  }, 1000);
+}
+
+function timerHandler(id) {
+  time--;
+  renderTime();
+
+  if (time === 0) {
+    clearInterval(timer);
+    markCompleted(id);
+    timer = null;
+    renderTasks();
+    startBreak();
+  }
+}
+
+// Función para la creación de tiempo de break
+
+function startBreak() {
+  time = 3;
+  taskName.textContent = "Break";
+  timerBreak = setInterval(() => {
+    timerBreakHandler();
+  }, 1000);
+}
+
+function timerBreakHandler() {
+  time--;
+  renderTime();
+
+  if (time === 0) {
+    clearInterval(timerBreak);
+    current = null;
+    timerBreak = null;
+    taskName.textContent = "";
+    renderTasks();
+  }
+}
+
+// Función para renderizar el tiempo en segundos
+
+function renderTime() {
+  const timeDiv = document.querySelector("#time #value");
+  const minutes = parseInt(time / 60);
+  const seconds = parseInt(time % 60);
+
+  timeDiv.textContent = `${minutes < 10 ? "0" : ""}${minutes}:${
+    seconds < 10 ? "0" : ""
+  }${seconds}`;
+}
+
+// Función para marcar las tareas realizadas
+
+function markCompleted(id) {
+  const taskIndex = tasks.findIndex((task) => task.id === id);
+  tasks[taskIndex].completed = true;
 }
