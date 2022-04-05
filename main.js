@@ -46,7 +46,7 @@ function renderTasks() {
             <div class="completed">${
               task.completed
                 ? `<span class="done">Done</span>`
-                : `<button class="start-button" data-id="${task.id}">Start</button>`
+                : `<button class="start-button" data-id="${task.id}">START</button>`
             }</div>
             <div class="title">${task.title}</div>
         </div>
@@ -74,11 +74,11 @@ function renderTasks() {
 //Generamos la función para generar el tiempos del pomodoro.
 
 function startButtonHandler(id) {
-  time = 5;
+  time = 25 * 60;
   current = id;
   const taskIndex = tasks.findIndex((task) => task.id === id);
   taskName.textContent = tasks[taskIndex].title;
-
+  renderTime();
   timer = setInterval(() => {
     timerHandler(id);
   }, 1000);
@@ -100,8 +100,9 @@ function timerHandler(id) {
 // Función para la creación de tiempo de break
 
 function startBreak() {
-  time = 3;
+  time = 5 * 60;
   taskName.textContent = "Break";
+  renderTime();
   timerBreak = setInterval(() => {
     timerBreakHandler();
   }, 1000);
